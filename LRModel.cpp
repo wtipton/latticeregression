@@ -182,7 +182,7 @@ void LRModel::trainModel(std::vector<std::vector<double>> data, double alpha, do
 			norm_of_grad += dJdbk*dJdbk;
 		}
 		norm_of_grad = sqrt(norm_of_grad);
-		std::cout << norm_of_grad << std::endl;
+		//std::cout << norm_of_grad << std::endl;
 		if (norm_of_grad <= e)
 			break;
 	}
