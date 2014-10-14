@@ -37,7 +37,7 @@ public:
 	//  alpha: gradient descent step size parameter
 	//  lambda: regularization parameter
 	//  e: convergence parameter: stop when the norm of the gradient falls below this value.
-	LRModel(int n, int t, std::vector<std::vector<double>> data, double alpha, double lambda, double e);
+	LRModel(int n, int t, const std::vector<std::vector<double>>& data, double alpha, double lambda, double e);
 
 	// Constructor for reading saved model from disk.
 	LRModel(const std::string& filename);
@@ -45,10 +45,10 @@ public:
 	virtual ~LRModel();
 
 	// Save the model in a serialized format on disk.
-	void writeToDisk(const std::string& filename);
+	void writeToDisk(const std::string& filename) const;
 
 	// Returns predicted response given some features. The input array should have length n.
-	double predict(double features[]);
+	double predict(const double features[]) const;
 
 private:
 	// Number of features
@@ -73,7 +73,7 @@ private:
 	std::vector<double> b_;
 
 	// m is the number of training examples.  Other inputs are as to the constructor.
-	void trainModel(std::vector<std::vector<double>> data, double alpha, double lambda, double e);
+	void trainModel(const std::vector<std::vector<double>>& data, double alpha, double lambda, double e);
 
 	// Initialize supplementary weights and adj structures.
 	// Inputs:
@@ -84,10 +84,10 @@ private:
 	//   adjDataToLattice: vector of length data.size() containing arrays of lattice points adjacent to each training example
 	//   adjLatticeToData: vector (of length num_lattice_points_) of vectors containing indices (into data) of examples adjacent
 	//                     to each lattice point
-	void makeTrainingWeightsAndAdj(std::vector<std::vector<double>> data, std::vector<std::map<int,double>>& weights, std::vector<std::vector<int>>& adjDataToLattice, std::vector<std::vector<int>>& adjLatticeToData);
+	void makeTrainingWeightsAndAdj(const std::vector<std::vector<double>>& data, std::vector<std::map<int,double>>& weights, std::vector<std::vector<int>>& adjDataToLattice, std::vector<std::vector<int>>& adjLatticeToData);
 
 	// Get non-zero weights (and corresponding adjacent lattice points) for a given set of inputs.
-	std::map<int,double> getWeights(double x[]);
+	std::map<int,double> getWeights(const double x[]);
 
 	// Takes an int array of coordinates of length m_ describing a grid point and returns the corresponding index into b_.
 	// NB: The "coordinates" here are integers from 0 to t_.  Multiply them by div_len_ to convert to cartesian.

@@ -11,7 +11,7 @@
 #include <iostream>
 #include <zlib.h>
 
-LRModel::LRModel(int n, int t, std::vector<std::vector<double>> data, double alpha, double lambda, double e)
+LRModel::LRModel(int n, int t, const std::vector<std::vector<double>>& data, double alpha, double lambda, double e)
 : n_(n), t_(t), div_len_(1.0/t), num_lattice_points_(pow(t+1, n)) {
 	for (int i = 0; i < num_lattice_points_; i++)
 		b_.push_back(1.0);
@@ -47,7 +47,7 @@ LRModel::LRModel(const std::string& filename) {
 	initAdjLatticePoints();
 }
 
-void LRModel::writeToDisk(const std::string& filename) {
+void LRModel::writeToDisk(const std::string& filename) const {
 	gzFile outFile = gzopen(filename.c_str(), "wb");
 	if (outFile == Z_NULL)
 		std::cout << "ERROR: gzwrite failed to open " << filename << std::endl;
@@ -156,7 +156,7 @@ void LRModel::initAdjLatticePoints() {
 }
 
 
-void LRModel::trainModel(std::vector<std::vector<double>> data, double alpha, double lambda, double e) {
+void LRModel::trainModel(const std::vector<std::vector<double>>& data, double alpha, double lambda, double e) {
 	std::vector<std::map<int,double>> weights; // weights of training examples
 	std::vector<std::vector<int>> adjLatticeToData; // essentially a map from lattice points to adjacent training examples
 	std::vector<std::vector<int>> adjDataToLattice; // essentially a map from training examples to adjacent lattice points
@@ -182,7 +182,7 @@ void LRModel::trainModel(std::vector<std::vector<double>> data, double alpha, do
 			norm_of_grad += dJdbk*dJdbk;
 		}
 		norm_of_grad = sqrt(norm_of_grad);
-		//std::cout << norm_of_grad << std::endl;
+		std::cout << alpha << " " << norm_of_grad << std::endl;
 		if (norm_of_grad <= e)
 			break;
 	}
@@ -193,7 +193,7 @@ void LRModel::trainModel(std::vector<std::vector<double>> data, double alpha, do
 */
 }
 
-void LRModel::makeTrainingWeightsAndAdj(std::vector<std::vector<double>> data, std::vector<std::map<int,double>>& weights,
+void LRModel::makeTrainingWeightsAndAdj(const std::vector<std::vector<double>>& data, std::vector<std::map<int,double>>& weights,
 		                                std::vector<std::vector<int>>& adjDataToLattice, std::vector<std::vector<int>>& adjLatticeToData) {
 	weights.clear();
 	adjDataToLattice.clear();
@@ -220,7 +220,7 @@ void LRModel::makeTrainingWeightsAndAdj(std::vector<std::vector<double>> data, s
 	}
 }
 
-std::map<int,double> LRModel::getWeights(double x[]) {
+std::map<int,double> LRModel::getWeights(const double x[]) {
 	std::map<int,double> result;
 
 	// Find the  each dimension, there's ind the upper and lower bounding tick marks for x in each dimension
@@ -276,7 +276,7 @@ std::map<int,double> LRModel::getWeights(double x[]) {
 	return result;
 }
 
-double LRModel::predict(double x[]) {
+double LRModel::predict(const double x[]) const {
 	std::map<int,double> a = getWeights(x);
 
 	double result = 0.0;
