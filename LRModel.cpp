@@ -182,7 +182,7 @@ void LRModel::trainModel(const std::vector<std::vector<double>>& data, double al
 			norm_of_grad += dJdbk*dJdbk;
 		}
 		norm_of_grad = sqrt(norm_of_grad);
-		std::cout << alpha << " " << norm_of_grad << std::endl;
+		std::cout << alpha << " " << norm_of_grad << " " << getRMSE(data) << std::endl;
 		if (norm_of_grad <= e)
 			break;
 	}
@@ -220,7 +220,7 @@ void LRModel::makeTrainingWeightsAndAdj(const std::vector<std::vector<double>>& 
 	}
 }
 
-std::map<int,double> LRModel::getWeights(const double x[]) {
+std::map<int,double> LRModel::getWeights(const double x[]) const {
 	std::map<int,double> result;
 
 	// Find the  each dimension, there's ind the upper and lower bounding tick marks for x in each dimension
@@ -287,7 +287,17 @@ double LRModel::predict(const double x[]) const {
 	return result;
 }
 
-int LRModel::coordsToIndx(const int c[]) {
+double LRModel::getRMSE(const std::vector<std::vector<double>>& data) const {
+	double mse = 0.0;
+	for (auto datapt : data) {
+		double resid = datapt[0] - predict(&datapt[1]);
+		mse += resid * resid;
+	}
+	mse /= data.size();
+	return sqrt(mse);
+}
+
+int LRModel::coordsToIndx(const int c[]) const {
 	int result = c[0];
 	for (int i = 1; i < n_; i++) {
 		result *= t_+1;
@@ -296,7 +306,7 @@ int LRModel::coordsToIndx(const int c[]) {
 	return result;
 }
 
-void LRModel::indxToCoords(int indx, int c[]) {
+void LRModel::indxToCoords(int indx, int c[]) const {
 	for (int i = n_-1; i >=0; i--) {
 		c[i] = indx % (t_+1);
 		indx /= (t_+1);

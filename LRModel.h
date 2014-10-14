@@ -50,6 +50,9 @@ public:
 	// Returns predicted response given some features. The input array should have length n.
 	double predict(const double features[]) const;
 
+	// Returns root mean squared error of model on data which is formatted the same as in the ctor
+	double getRMSE(const std::vector<std::vector<double>>& data) const;
+
 private:
 	// Number of features
 	int n_;
@@ -87,14 +90,14 @@ private:
 	void makeTrainingWeightsAndAdj(const std::vector<std::vector<double>>& data, std::vector<std::map<int,double>>& weights, std::vector<std::vector<int>>& adjDataToLattice, std::vector<std::vector<int>>& adjLatticeToData);
 
 	// Get non-zero weights (and corresponding adjacent lattice points) for a given set of inputs.
-	std::map<int,double> getWeights(const double x[]);
+	std::map<int,double> getWeights(const double x[]) const;
 
 	// Takes an int array of coordinates of length m_ describing a grid point and returns the corresponding index into b_.
 	// NB: The "coordinates" here are integers from 0 to t_.  Multiply them by div_len_ to convert to cartesian.
-	int coordsToIndx(const int c[]);
+	int coordsToIndx(const int c[]) const;
 
 	// Takes an index into b_ and writes an int array of coordinates.
-	void indxToCoords(int indx, int c[]);
+	void indxToCoords(int indx, int c[]) const;
 };
 
 #endif /* LRMODEL_H_ */
